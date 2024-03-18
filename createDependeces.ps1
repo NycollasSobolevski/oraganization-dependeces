@@ -16,50 +16,61 @@ foreach ($file in $dirs) {
         continue  
     }
 
+    $file = $file.BaseName
     
     # ======================= creating Domain dependences =======================
 
     $domain_path      = Join-Path -Path "./Domain/" -ChildPath $file;
     $model_path       = Join-Path -Path $domain_path -ChildPath "Models";
-    $repositorie_path = Join-Path -Path $domain_path -ChildPath "Repositories";
+    $repository_path = Join-Path -Path $domain_path -ChildPath "Repositories";
     $service_path     = Join-Path -Path $domain_path -ChildPath "Services";
     
     mkdir $model_path ;
-    mkdir $repositorie_path ;
+    mkdir $repository_path ;
     mkdir $service_path;
     
+    $model_filename = $file + ".cs";
     $model_content = "//! Implements Model here!";
-    $model_content | Out-File -FilePath "$model_path/Model.cs";
+    $model_content | Out-File -FilePath "$model_path/$model_filename";
 
+    $irepository_filename = "I" + $file + "Repository.cs";
     $repository_content = "//! Implements IRepository here!";
-    $repository_content | Out-File -FilePath "$repositorie_path/IRepository.cs";
+    $repository_content | Out-File -FilePath "$repository_path/$irepository_filename";
     
+    $iservice_filename = "I" + $file + "Service.cs"
     $service_content = "//! Implements Iservice here! ";
-    $service_content | Out-File -FilePath "$service_path/IService.cs";
+    $service_content | Out-File -FilePath "$service_path/$iservice_filename";
 
 
 
     # ======================= creating Core dependences =======================
 
     $core_path      = Join-Path -Path "./Core/" -ChildPath $file;
-    $map_path       = Join-Path -Path $core_path -ChildPath "Mapping";
+    
     $classmap_filename = $file + "ClassMap.cs";
-    $map_path       = Join-Path -Path $map_path -ChildPath $classmap_filename;
-    $repositorie_path = Join-Path -Path $core_path -ChildPath "Repository";
+    $repository_filename = $file + "Repository.cs"
+    $service_filename = $file + "Service.cs"
+    
+    $map_path         = Join-Path -Path $core_path -ChildPath "Mapping";
+    $repository_path  = Join-Path -Path $core_path -ChildPath "Repository";
     $service_path     = Join-Path -Path $core_path -ChildPath "Service";
     
     mkdir $map_path ;
-    mkdir $repositorie_path ;
+    mkdir $repository_path ;
     mkdir $service_path;
+
+    $map_file_path = Join-Path -Path $map_path -ChildPath $classmap_filename;
+    $repo_file_path = Join-Path -Path $repository_path -ChildPath $repository_filename;
+    $service_file_path = Join-Path -Path $service_path -ChildPath $service_filename;
     
     $classmap_content = "//! Implements classMapping here!";
-    $classmap_content | Out-File -FilePath $map_path;
+    $classmap_content | Out-File -FilePath $map_file_path;
 
     $repository_content = "//! Implements $file Repository here!";
-    $repository_content | Out-File -FilePath "$repositorie_path/Repository.cs";
+    $repository_content | Out-File -FilePath $repo_file_path;
     
     $service_content = "//! Implements $file Service here!";
-    $service_content | Out-File -FilePath "$service_path/Service.cs";
+    $service_content | Out-File -FilePath $service_file_path;
 
 
 }
