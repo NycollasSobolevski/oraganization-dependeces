@@ -1,36 +1,57 @@
 $dirs = Get-ChildItem -Path ".\Model" -File
 $ignorated = @();
 $index_of_ignorated = 0
+$base_namespace
+
+if($args -contains "--basenamespace") {
+    $index_namespace = [array]::IndexOf($args, "--basenamespace")
+    $base_namespace = $args[$index_namespace + 1]
+}
+
 
 if ($args -contains "--ignore") {
     $index_of_ignorated = [array]::IndexOf($args, "--ignore")
     for ($i = $index_of_ignorated + 1; $i -lt ($args.Count); $i++) {
+        if ($args[$i].Contains("-")) {
+            break
+        }
         $ignorated += $args[$i];
     }
 }
 
 foreach ($file in $dirs) {
 
-    if ($ignorated -contains $file) {
+    if ($ignorated.Count -gt 0 -and $ignorated -contains $file) {
         Write-Host "$file ignorated"
         continue  
     }
 
+    $file_path = Join-Path -Path $file.DirectoryName -ChildPath $file.Name
     $file = $file.BaseName
     
     # ======================= creating Domain dependences =======================
 
     $domain_path      = Join-Path -Path "./Domain/" -ChildPath $file;
     $model_path       = Join-Path -Path $domain_path -ChildPath "Models";
-    $repository_path = Join-Path -Path $domain_path -ChildPath "Repositories";
+    $repository_path  = Join-Path -Path $domain_path -ChildPath "Repositories";
     $service_path     = Join-Path -Path $domain_path -ChildPath "Services";
     
+    #creating Domain sub-folders
     mkdir $model_path ;
     mkdir $repository_path ;
     mkdir $service_path;
     
     $model_filename = $file + ".cs";
-    $model_content = "//! Implements Model here!";
+    $model_content = Get-Content -Path $file_path;
+    #editing namespace of MODEL
+    if($base_namespace -ne ""){
+        for ($line = 0; $line -lt $model_content.Count; $line ++) {
+            if($model_content[$line].Contains("namespace")) {
+                $model_content[$line] = "namespace " + $base_namespace + ".Domain.Model;";
+                break
+            }
+        }
+    }
     $model_content | Out-File -FilePath "$model_path/$model_filename";
 
     $irepository_filename = "I" + $file + "Repository.cs";
