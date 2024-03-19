@@ -16,3 +16,10 @@ this command will edit namespace of Domain.Model files
 ```powershell
 .\createDependeces.ps1 --basenamespace namespace.project
 ```
+
+
+
+
+TODO:
+- create a IRepository< T >
+- create a iclassrepository : irepository< class > 

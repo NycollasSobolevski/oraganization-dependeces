@@ -22,16 +22,22 @@ if ($args -contains "--ignore") {
 foreach ($file in $dirs) {
 
     if ($ignorated.Count -gt 0 -and $ignorated -contains $file) {
-        Write-Host "$file ignorated"
-        continue  
+        Write-Host "$file ignorated";
+        continue; 
     }
 
     $file_path = Join-Path -Path $file.DirectoryName -ChildPath $file.Name
     $file = $file.BaseName
     
+    # ======================= getting file data  =======================
+    
+    if ($file.Contains("Context")) {
+        continue;
+    }
+
     # ======================= creating Domain dependences =======================
 
-    $domain_path      = Join-Path -Path "./Domain/" -ChildPath $file;
+    $domain_path      = Join-Path -Path "./Domain/"  -ChildPath $file;
     $model_path       = Join-Path -Path $domain_path -ChildPath "Models";
     $repository_path  = Join-Path -Path $domain_path -ChildPath "Repositories";
     $service_path     = Join-Path -Path $domain_path -ChildPath "Services";
