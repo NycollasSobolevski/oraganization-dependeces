@@ -17,7 +17,10 @@ this command will edit namespace of Domain.Model files
 .\createDependeces.ps1 --basenamespace namespace.project
 ```
 
-
+this command will create dependences by variable in params
+```powershell
+.\createDependences.ps1 -New Name.of.dependences
+```
 
 
 TODO:
